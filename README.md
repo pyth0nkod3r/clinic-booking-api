@@ -67,5 +67,12 @@ API with the server-provided key (`/config.js`) — no hardcoded secrets.
 
 ## Deployed
 
-- API: `https://<render-service>.onrender.com`
+- API: https://clinic-booking-api-lwo2.onrender.com
 - Web page: same origin, `/`
+- Database: Neon Postgres (Frankfurt, autoscaling 0.25–2 CU, free plan)
+- Host: Render web service (free plan)
+
+## Verification
+
+`npm test` runs 13 end-to-end tests in-process; `test/live.verify.mjs` re-runs
+the critical paths against the deployed URL (`BASE=... API_KEY=... node test/live.verify.mjs`).
