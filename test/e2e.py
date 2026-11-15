@@ -231,7 +231,7 @@ def main():
         hdrs = {k.lower(): v for k, v in r.getheaders()}
         check(f"CORS preflight {m} {path}", r.status in (200, 204) and
               hdrs.get("access-control-allow-origin") == "*" and
-              "x-api-key" in hdrs.get("access-control-allow-headers", ""),
+              "x-api-key" in hdrs.get("access-control-allow-headers", "").lower(),
               f"{r.status} {hdrs.get('access-control-allow-headers')}")
 
     # ---- misc ----
