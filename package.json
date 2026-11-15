@@ -1,0 +1,16 @@
+{
+  "name": "clinic-booking",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "setup": "npm install && uv sync && cd web && npm install",
+    "dev": "concurrently -n api,web -c cyan,magenta \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "cd api && uv run uvicorn server:app --port 8765 --env-file ../.env",
+    "dev:web": "cd web && npm run dev",
+    "test:local": "set -a && . ./.env && set +a && BASE=http://127.0.0.1:8765 API_KEY=\"$API_KEY\" DATABASE_URL=\"$DATABASE_URL\" uv run python test/e2e.py"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

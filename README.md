@@ -41,24 +41,42 @@ test/     e2e suite (stdlib HTTP client, no test-framework deps)
    60-second window, which keeps the "5 attempts, failures included" rule exact
    and per-email isolated.
 
-## Run locally
+## Run locally (one command)
+
+Everything is wired through `concurrently`: one command starts the FastAPI
+server (uvicorn, port 8765) and the React Router dev server (vite, port 5173)
+together, both reading a single root `.env`.
 
 ```bash
-# API (needs DATABASE_URL; Neon works fine)
-cd api
-python -m venv .venv && . .venv/bin/activate
-pip install -r requirements.txt
-export DATABASE_URL=postgres://... API_KEY=my-key
-uvicorn server:app --port 8765
+# 1. one-time setup: installs npm deps (root + web) and the python venv
+cp .env.example .env        # then fill in DATABASE_URL and the API key
+npm run setup
 
-# Web (Vite dev server proxies nothing; it talks to the API origin directly)
-cd web
-npm install
-VITE_API_BASE=http://127.0.0.1:8765 VITE_API_KEY=my-key npm run dev
+# 2. start API + web together
+npm run dev
+#    [api] Uvicorn running on http://127.0.0.1:8765
+#    [web] Local: http://localhost:5173/
 
-# e2e suite against any BASE
-BASE=http://127.0.0.1:8765 API_KEY=my-key DATABASE_URL=postgres://... python test/e2e.py
+# 3. run the 66-check e2e suite against the local stack
+npm run test:local
 ```
+
+`.env` drives both processes: `DATABASE_URL` + `API_KEY` for uvicorn (loaded via
+`--env-file`), `VITE_API_BASE` + `VITE_API_KEY` for vite (`envDir` points at the
+repo root). In local dev the web app talks to `http://127.0.0.1:8765`; in
+production those values come from the Render service env vars instead, so no
+code changes are needed between environments.
+
+Individual processes, if you prefer separate terminals:
+
+```bash
+npm run dev:api     # FastAPI on :8765
+npm run dev:web     # vite on :5173
+```
+
+No uv installed? `python3 -m venv .venv && .venv/bin/pip install -r
+api/requirements.txt` and run `.venv/bin/uvicorn server:app --app-dir api
+--port 8765` instead of the `dev:api` script.
 
 ## Web app notes
 
