@@ -33,7 +33,8 @@ export async function api<T>(
   path: string,
   opts: { method?: string; body?: unknown; idempotencyKey?: string } = {},
 ): Promise<T> {
-  const headers: Record<string, string> = { "Content-Type": "application/json", "X-API-Key": KEY };
+  const headers: Record<string, string> = { "X-API-Key": KEY };
+  if (opts.body !== undefined) headers["Content-Type"] = "application/json";
   if (opts.idempotencyKey) headers["Idempotency-Key"] = opts.idempotencyKey;
   const res = await fetch(BASE + path, {
     method: opts.method ?? "GET",

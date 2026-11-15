@@ -218,6 +218,22 @@ def main():
     s, d, _ = req("POST", "/bookings", body={"slot_id": "r2", "name": "F", "email": "fine@example.com"})
     check("L5 other email unaffected", s == 201)
 
+    # ---- CORS preflights (what a browser sends before any cross-origin call) ----
+    for m, path in [("GET", "/slots"), ("POST", "/bookings"), ("DELETE", "/bookings/x"), ("POST", "/reset")]:
+        u = urlparse(BASE)
+        conn = (http.client.HTTPSConnection if IS_HTTPS else http.client.HTTPConnection)(_u.netloc, timeout=30)
+        conn.request("OPTIONS", path, headers={
+            "Origin": "https://clinic-booking-web-uxgm.onrender.com",
+            "Access-Control-Request-Method": m,
+            "Access-Control-Request-Headers": "content-type, x-api-key, idempotency-key",
+        })
+        r = conn.getresponse(); body = r.read(); conn.close()
+        hdrs = {k.lower(): v for k, v in r.getheaders()}
+        check(f"CORS preflight {m} {path}", r.status in (200, 204) and
+              hdrs.get("access-control-allow-origin") == "*" and
+              "x-api-key" in hdrs.get("access-control-allow-headers", ""),
+              f"{r.status} {hdrs.get('access-control-allow-headers')}")
+
     # ---- misc ----
     s, d, _ = req("GET", "/definitely-not-a-thing")
     check("404 unknown route", s == 404 and d == {"error": "not found"}, f"{s} {d}")

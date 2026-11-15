@@ -75,16 +75,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Clinic booking API", version="2.0.0-python", lifespan=lifespan)
 
-# The SPA and the docs site live on different origins, so CORS must allow them.
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "X-API-Key", "Idempotency-Key"],
-    expose_headers=["Retry-After"],
-)
-
-
 # ---- error shape: every error is {"error": "<message>"} ---------------------
 
 class ApiError(Exception):
@@ -128,11 +118,27 @@ async def unhandled_handler(request: Request, exc: Exception):
 
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
+    # CORS preflight carries no credentials by design; let it through so the
+    # CORSMiddleware (registered below, outermost) can answer it.
+    if request.method == "OPTIONS":
+        return await call_next(request)
     if any(request.url.path == p or request.url.path.startswith(p + "/") for p in API_PATHS):
         key = request.headers.get("X-API-Key", "")
         if not key or not constant_time_eq(key, API_KEY):
             return JSONResponse(status_code=401, content={"error": "unauthorized"})
     return await call_next(request)
+
+
+# The SPA and the docs site live on different origins, so CORS must allow them.
+# Registered after the auth middleware above, which makes it the outermost
+# middleware: preflight OPTIONS is answered here, before auth ever runs.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "X-API-Key", "Idempotency-Key"],
+    expose_headers=["Retry-After"],
+)
 
 
 async def body_json(request: Request) -> dict[str, Any]:
