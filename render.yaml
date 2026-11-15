@@ -22,7 +22,7 @@ services:
     staticPublishPath: build/client
     rewrites:
       - source: /*
-        destination: /index.html
+        destination: /index.html  # also mirrored in web/public/_redirects
     envVars:
       - key: VITE_API_BASE
         value: https://clinic-booking-api-lwo2.onrender.com

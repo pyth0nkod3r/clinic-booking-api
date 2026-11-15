@@ -5,7 +5,7 @@ Koya Cohort 4 assessment. This repo replaces the earlier Node.js/Express
 version with the same contract, same database, and the same URLs.
 
 - **API** — Python 3 + FastAPI + asyncpg on Neon Postgres → https://clinic-booking-api-lwo2.onrender.com
-- **Web** — React 19 + React Router v8 (framework mode, SPA) on Render static → https://clinic-booking-web.onrender.com
+- **Web** — React 19 + React Router v8 (framework mode, SPA) on Render static → https://clinic-booking-web-uxgm.onrender.com
 - **Docs** — Swagger UI over the published OpenAPI contract → https://clinic-booking-docs.onrender.com
 - **Repo** — https://github.com/pyth0nkod3r/clinic-booking-api (public)
 
