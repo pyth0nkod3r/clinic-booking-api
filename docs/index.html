@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clinic Booking API — Docs</title>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+  <style>
+    header {
+      background: linear-gradient(120deg, #0b5c73, #0e7490 60%, #0d9488);
+      color: #fff; padding: 18px 24px; display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 8px; font-family: system-ui, sans-serif;
+    }
+    header h1 { font-size: 1.15rem; margin: 0; }
+    header a { color: #c7f6ff; font-size: .88rem; text-decoration: none; margin-left: 18px; }
+    header a:hover { text-decoration: underline; }
+    #swagger-ui { max-width: 1100px; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🩺 Clinic Booking API — interactive docs</h1>
+    <nav>
+      <a href="https://clinic-booking-web.onrender.com">Booking web page (React Router SPA)</a>
+      <a href="https://github.com/pyth0nkod3r/clinic-booking-api">Source (FastAPI + React Router v8)</a>
+      <a href="https://koyaacademy.com/assessment-api">Original spec</a>
+    </nav>
+  </header>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js" crossorigin></script>
+  <script>
+    window.onload = () => {
+      window.SwaggerUIBundle({
+        url: './openapi.json',
+        dom_id: '#swagger-ui',
+        persistAuthorization: true,
+        tryItOutEnabled: true,
+      });
+    };
+  </script>
+</body>
+</html>

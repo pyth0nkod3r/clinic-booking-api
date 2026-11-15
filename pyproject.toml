@@ -1,0 +1,11 @@
+[project]
+name = "clinic-booking-py"
+version = "2.0.0"
+description = "Clinic booking API (FastAPI) + React Router SPA - Koya Cohort 4 assessment"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.163",
+    "uvicorn[standard]>=0.40",
+    "asyncpg>=0.32",
+    "httpx>=0.29",
+]
